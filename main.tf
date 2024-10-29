@@ -38,6 +38,9 @@ resource "aws_internet_gateway" "gate1" {
 }
 resource "aws_route_table" "pubroute" {
   vpc_id = aws_vpc.vpc1.id
+  tags = {
+    "Name" = "public"
+  }
 
   route {
     cidr_block = local.anywhere
@@ -53,5 +56,22 @@ resource "aws_route_table_association" "pubrt2s1s2" {
   route_table_id = aws_route_table.pubroute.id
 
   depends_on = [ aws_route_table.pubroute ]
+  
+}
+
+resource "aws_route_table" "privateroute" {
+  vpc_id = aws_vpc.vpc1.id
+  tags = {
+    Name = "private"
+  }
+  
+}
+
+resource "aws_route_table_association" "privateroute" {
+  count = 4
+  route_table_id = aws_route_table.privateroute.id
+  subnet_id = aws_subnet.subnets[count.index + 2].id
+
+  depends_on = [ aws_subnet.subnets[2], aws_subnet.subnets[3], aws_subnet.subnets[4], aws_subnet.subnets[5] ]
   
 }
