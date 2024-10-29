@@ -36,3 +36,22 @@ resource "aws_internet_gateway" "gate1" {
     depends_on = [ aws_vpc.vpc1 ]
   
 }
+resource "aws_route_table" "pubroute" {
+  vpc_id = aws_vpc.vpc1.id
+
+  route {
+    cidr_block = local.anywhere
+    gateway_id = aws_internet_gateway.gate1.id
+  }
+
+  depends_on = [ aws_vpc.vpc1, aws_subnet.subnets[0], aws_subnet.subnets[1], aws_internet_gateway.gate1 ]
+}
+
+resource "aws_route_table_association" "pubrt2s1s2" {
+  count = 2
+  subnet_id = aws_subnet.subnets[count.index].id
+  route_table_id = aws_route_table.pubroute.id
+
+  depends_on = [ aws_route_table.pubroute ]
+  
+}
