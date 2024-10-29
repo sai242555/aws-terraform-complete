@@ -2,7 +2,7 @@ provider "aws" {
     region = var.region
 }
 variable "region" {
-    default = "us-west-2"
+    default = "ap-south-1"
   
 }
 variable "subnetnames" {
@@ -13,6 +13,9 @@ variable "subnetnames" {
 
 resource "aws_vpc" "vpc1" {
     cidr_block = "10.0.0.0/16"
+    tags = {
+      "Name" = "vpc1"
+    }
 }
 resource "aws_subnet" "subnets" {
     count = 6
